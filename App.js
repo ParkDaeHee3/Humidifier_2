@@ -36,10 +36,10 @@ export default function App() {
       setCity(location[0]?.city || "Unknown");
 
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric` //metric = 온도 표기 (섭씨 'C)
       );
       const json = await response.json();
-
+      //console.log(json.daily); //날씨 정보 확인
       if (json.daily) {
         setDays(json.daily);
       } else {
@@ -69,7 +69,7 @@ export default function App() {
       >
         {days.length === 0 ? (
           <View style={styles.day}>
-            <ActivityIndicator
+            <ActivityIndicator // ActivityIndicator은 Loading을 나타내줌
               color="white"
               style={{ marginTop: 10 }}
               size="large"
@@ -82,7 +82,7 @@ export default function App() {
                 {parseFloat(day.temp.day).toFixed(1)}
               </Text>
               <Text style={styles.description}>{day.weather[0].main}</Text>
-              <Text style={styles.tinyText}>{day.weather[0].humidity}</Text>
+              <Text style={styles.tinyText}>Humidity: {day.humidity}%</Text>
             </View>
           ))
         )}
