@@ -8,9 +8,11 @@ import {
   ActivityIndicator,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { Fontisto } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -32,6 +34,8 @@ export default function App() {
   const [ok, setOk] = useState(true);
   const [isOn, setIsOn] = useState(false);
   const [alarmSet, setAlarmSet] = useState(false);
+  const [alarmTime, setAlarmTime] = useState(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -56,6 +60,26 @@ export default function App() {
   useEffect(() => {
     getWeather();
   }, []);
+
+  const handleTimeChange = (event, selectedTime) => {
+    setShowTimePicker(false);
+    if (selectedTime) {
+      setAlarmTime(selectedTime);
+      setAlarmSet(true);
+    }
+  };
+
+  useEffect(() => {
+    if (alarmSet && alarmTime) {
+      const alarmTimeout = setTimeout(() => {
+        alert("Alarm ringing!");
+        setAlarmSet(false);
+        setAlarmTime(null);
+      }, alarmTime.getTime() - new Date().getTime());
+
+      return () => clearTimeout(alarmTimeout);
+    }
+  }, [alarmSet, alarmTime]);
 
   return (
     <View style={styles.container}>
@@ -82,9 +106,6 @@ export default function App() {
             const date = new Date(day.dt * 1000);
             const dateString = date.toLocaleDateString(undefined, {
               weekday: "long",
-              //year: "numeric",
-              // month: "long",
-              //day: "numeric",
             });
 
             return (
@@ -129,13 +150,23 @@ export default function App() {
             name={alarmSet ? "alarm-off" : "alarm"}
             size={48}
             color="white"
-            onPress={() => setAlarmSet(!alarmSet)}
+            onPress={() => setShowTimePicker(!showTimePicker)}
           />
           <Text style={styles.buttonText}>
-            {alarmSet ? "Disable " : "Set Alarm"}
+            {alarmSet
+              ? `Alarm Set: ${alarmTime?.toLocaleTimeString()}`
+              : "Set Alarm"}
           </Text>
         </View>
       </View>
+      {showTimePicker && (
+        <DateTimePicker
+          value={alarmTime || new Date()}
+          mode="time"
+          display="default"
+          onChange={handleTimeChange}
+        />
+      )}
     </View>
   );
 }
@@ -192,6 +223,7 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: "center",
+    marginBottom: 20,
   },
   buttonText: {
     color: "white",
