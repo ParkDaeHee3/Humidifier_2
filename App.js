@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Fontisto } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -29,6 +30,8 @@ export default function App() {
   const [city, setCity] = useState("Loading...");
   const [days, setDays] = useState([]);
   const [ok, setOk] = useState(true);
+  const [isOn, setIsOn] = useState(false);
+  const [alarmSet, setAlarmSet] = useState(false);
 
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -76,12 +79,11 @@ export default function App() {
           </View>
         ) : (
           days.map((day, index) => {
-            // Convert the Unix timestamp to a date string
             const date = new Date(day.dt * 1000);
             const dateString = date.toLocaleDateString(undefined, {
               weekday: "long",
               //year: "numeric",
-              //month: "long",
+              // month: "long",
               //day: "numeric",
             });
 
@@ -112,7 +114,28 @@ export default function App() {
           })
         )}
       </ScrollView>
-      <View></View>
+      <View style={styles.buttonsContainer}>
+        <View style={styles.button}>
+          <MaterialCommunityIcons
+            name={isOn ? "water-off" : "water"}
+            size={48}
+            color="white"
+            onPress={() => setIsOn(!isOn)}
+          />
+          <Text style={styles.buttonText}>{isOn ? "Turn Off" : "Turn On"}</Text>
+        </View>
+        <View style={styles.button}>
+          <MaterialCommunityIcons
+            name={alarmSet ? "alarm-off" : "alarm"}
+            size={48}
+            color="white"
+            onPress={() => setAlarmSet(!alarmSet)}
+          />
+          <Text style={styles.buttonText}>
+            {alarmSet ? "Disable " : "Set Alarm"}
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -120,7 +143,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "tomato",
+    backgroundColor: "skyblue",
   },
   city: {
     flex: 1.2,
@@ -161,5 +184,18 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "white",
     fontWeight: "500",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 20,
+  },
+  button: {
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    marginTop: 5,
   },
 });
