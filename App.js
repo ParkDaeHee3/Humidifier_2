@@ -29,6 +29,7 @@ export default function App() {
   const [city, setCity] = useState("Loading...");
   const [days, setDays] = useState([]);
   const [ok, setOk] = useState(true);
+
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
     if (!granted) {
@@ -48,9 +49,11 @@ export default function App() {
     const json = await response.json();
     setDays(json.daily);
   };
+
   useEffect(() => {
     getWeather();
   }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -72,35 +75,48 @@ export default function App() {
             />
           </View>
         ) : (
-          days.map((day, index) => (
-            <View key={index} style={styles.day}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  width: "100%",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text style={styles.temp}>
-                  {parseFloat(day.temp.day).toFixed(1)}
-                </Text>
-                <Fontisto
-                  name={icons[day.weather[0].main]}
-                  size={68}
-                  color="white"
-                />
-              </View>
+          days.map((day, index) => {
+            // Convert the Unix timestamp to a date string
+            const date = new Date(day.dt * 1000);
+            const dateString = date.toLocaleDateString(undefined, {
+              weekday: "long",
+              //year: "numeric",
+              //month: "long",
+              //day: "numeric",
+            });
 
-              <Text style={styles.description}>{day.weather[0].main}</Text>
-              <Text style={styles.tinyText}>Humidity: {day.humidity}%</Text>
-            </View>
-          ))
+            return (
+              <View key={index} style={styles.day}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    width: "100%",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text style={styles.temp}>
+                    {parseFloat(day.temp.day).toFixed(1)}
+                  </Text>
+                  <Fontisto
+                    name={icons[day.weather[0].main]}
+                    size={68}
+                    color="white"
+                  />
+                </View>
+                <Text style={styles.date}>{dateString}</Text>
+                <Text style={styles.description}>{day.weather[0].main}</Text>
+                <Text style={styles.tinyText}>Humidity: {day.humidity}%</Text>
+              </View>
+            );
+          })
         )}
       </ScrollView>
+      <View></View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -127,6 +143,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 100,
     color: "white",
+  },
+  date: {
+    marginTop: -10,
+    fontSize: 20,
+    color: "white",
+    fontWeight: "500",
   },
   description: {
     marginTop: -10,
