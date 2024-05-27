@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Dimensions,
-  ActivityIndicator,
+  Dimensions, // 공간
+  ActivityIndicator, // 동작 확인
   StyleSheet,
-  ScrollView,
-  TouchableOpacity,
+  ScrollView, // 옆으로 넘기기
+  TouchableOpacity, //클릭 동작
 } from "react-native";
 import { Fontisto } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -143,19 +143,17 @@ export default function App() {
             color="white"
             onPress={() => setIsOn(!isOn)}
           />
-          <Text style={styles.buttonText}>{isOn ? "Turn Off" : "Turn On"}</Text>
+          <Text style={styles.buttonText}>{isOn ? "Off" : "On"}</Text>
         </View>
         <View style={styles.button}>
           <MaterialCommunityIcons
-            name={alarmSet ? "alarm-off" : "alarm"}
+            name={alarmSet ? "alarm" : "alarm-off"}
             size={48}
             color="white"
             onPress={() => setShowTimePicker(!showTimePicker)}
           />
           <Text style={styles.buttonText}>
-            {alarmSet
-              ? `Alarm Set: ${alarmTime?.toLocaleTimeString()}`
-              : "Set Alarm"}
+            {alarmSet ? `Time: ${alarmTime?.toLocaleTimeString()}` : "Set"}
           </Text>
         </View>
       </View>
